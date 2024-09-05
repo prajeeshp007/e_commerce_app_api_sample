@@ -1,4 +1,5 @@
 import 'package:e_commerce_app_api_sample/controller/home_screen_controller.dart';
+import 'package:e_commerce_app_api_sample/view/products_details_screen/products_details_Screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +22,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
+        ///one for category calling
         await context.read<HomeScreenController>().getcategory();
+
+        /// one for all products
         await context.read<HomeScreenController>().getAllproductdetails();
         // setState(() {
         //   dropdwnitems.addAll(context
@@ -74,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: CircularProgressIndicator(),
                   )
                 : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -91,14 +95,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             value: dropvalue ?? 'ALL',
                             items: List.generate(
                               /// lengt kodukan ulla code
-                              homeprovider.categorieslist.length,
+                              /// evda toset.tolist vilikan ulla karanm duplicates value ellam ozhivakum
+                              homeprovider.categorieslist
+                                  .toSet()
+                                  .toList()
+                                  .length,
                               (index) => DropdownMenuItem(
                                   value: homeprovider.categorieslist[index],
                                   child: Text(homeprovider.categorieslist[index]
                                       .toUpperCase())),
                             ),
-                            onChanged: (value) async {
-                              await context
+                            onChanged: (value) {
+                              context
                                   .read<HomeScreenController>()
                                   .getAllproductdetails(
                                       category: value.toString());
@@ -119,70 +127,72 @@ class _HomeScreenState extends State<HomeScreen> {
                                 itemCount: homeprovider.products.length,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
-                                        mainAxisExtent: 350,
-                                        crossAxisSpacing: 30,
+                                        mainAxisExtent: 300,
+                                        crossAxisSpacing: 20,
                                         crossAxisCount: 2),
-                                itemBuilder: (context, index) => Container(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            height: 200,
-                                            decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                    fit: BoxFit.cover,
-                                                    image: NetworkImage(
-                                                        homeprovider
-                                                            .products[index]
-                                                            .image
-                                                            .toString())),
-                                                shape: BoxShape.circle),
-                                          ),
-                                          Text(
-                                            maxLines: 1,
-                                            homeprovider.products[index].title
-                                                .toString(),
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          Text(
-                                            'Rating:-${homeprovider.products[index].rating!.rate.toString()}',
-                                            style: TextStyle(
-                                                color: Colors.red,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w900),
-                                          ),
-                                          Text(
-                                            'Only:-${homeprovider.products[index].rating!.count.toString()} Left',
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w900),
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Icon(
-                                                Icons.currency_bitcoin,
-                                                color: Colors.black,
-                                                size: 30,
+                                itemBuilder: (context, index) => InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  product_detail_screen(
+                                                product_id: homeprovider
+                                                    .products[index].id!,
                                               ),
-                                              Text(
-                                                homeprovider
-                                                    .products[index].price
-                                                    .toString(),
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 25,
-                                                    fontWeight:
-                                                        FontWeight.w900),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                                            ));
+                                      },
+                                      child: Container(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              height: 200,
+                                              decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                      fit: BoxFit.cover,
+                                                      image: NetworkImage(
+                                                          homeprovider
+                                                              .products[index]
+                                                              .image
+                                                              .toString())),
+                                                  shape: BoxShape.circle),
+                                            ),
+                                            Text(
+                                              maxLines: 1,
+                                              homeprovider.products[index].title
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  Icons.attach_money_rounded,
+                                                  color: Colors.black,
+                                                  size: 30,
+                                                ),
+                                                Text(
+                                                  homeprovider
+                                                      .products[index].price
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 25,
+                                                      fontWeight:
+                                                          FontWeight.w900),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     )),
                       )

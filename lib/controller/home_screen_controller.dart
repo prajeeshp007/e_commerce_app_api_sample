@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:e_commerce_app_api_sample/model/home_screen_model/get_all_products_model.dart';
 import 'package:flutter/material.dart';
@@ -20,9 +19,14 @@ class HomeScreenController with ChangeNotifier {
   List<AllProductsDataResModel> products = [];
 
   /// section for get all products
+  ///
+  ///
   Future<void> getAllproductdetails({String category = ''}) async {
+    /// string category use chythath orooo categorina vilikan hann
     productsloading = true;
     notifyListeners();
+
+    /// create two url one for all products and one for products category url
     final allurl = Uri.parse('https://fakestoreapi.com/products');
     final categoryurl =
         Uri.parse('https://fakestoreapi.com/products/category/$category');
